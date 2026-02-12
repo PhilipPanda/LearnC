@@ -25,6 +25,11 @@ Build data structures from scratch. Linked lists, stacks, queues, trees, hash ta
 
 [→ Go to Data Structures](DataStructures/)
 
+### Game Programming
+Make actual playable games. Snake, Pong, Breakout using the renderer. Learn game loops, collision detection, input handling, state machines.
+
+[→ Go to Game Programming](GameProgramming/)
+
 ### Networking
 Network programming with sockets. TCP/UDP clients and servers, multi-client handling, HTTP basics, file transfer.
 
