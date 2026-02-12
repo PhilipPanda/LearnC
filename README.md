@@ -2,6 +2,14 @@
   <img src="github/images/banner.png" alt="LearnC banner" width="500"/>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/github/stars/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F&logo=github" alt="GitHub Stars" />
+  <img src="https://img.shields.io/github/languages/code-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Code Size" />
+  <img src="https://img.shields.io/github/repo-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Repo Size" />
+  <img src="https://img.shields.io/github/languages/top/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Top Language" />
+  <img src="https://img.shields.io/tokei/lines/github/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Lines of Code" />
+</p>
+
 ---
 
 ### Learn C by building real programs.
@@ -34,6 +42,11 @@ Make actual playable games. Snake, Pong, Breakout using the renderer. Learn game
 Master manual memory management. Debug leaks, build custom allocators (arena, pool, stack), understand malloc/free internals.
 
 [→ Go to Memory Management](MemoryManagement/)
+
+### Multithreading
+Concurrent programming with threads. Race conditions, mutexes, deadlocks, producer-consumer patterns. Learn to write safe parallel code.
+
+[→ Go to Multithreading](Multithreading/)
 
 ### Networking
 Network programming with sockets. TCP/UDP clients and servers, multi-client handling, HTTP basics, file transfer.
