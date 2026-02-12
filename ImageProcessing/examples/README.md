@@ -35,20 +35,77 @@ bin\01_bmp_reader.exe path\to\image.bmp
 - Bits per pixel
 - Average colors and brightness
 
-### 02 - BMP Writer (Coming Soon)
+### 02 - BMP Writer
 Creates BMP images from scratch, draws shapes and gradients.
 
-### 03 - Image Filters (Coming Soon)
-Applies convolution filters: blur, sharpen, edge detection.
+```bash
+bin\02_bmp_writer.exe
+```
 
-### 04 - Color Operations (Coming Soon)
-Brightness, contrast, grayscale, sepia tone adjustments.
+**Creates:**
+- Solid color images (red, green, blue)
+- Color gradients
+- Shapes (rectangles, circles, lines)
+- Checkerboard pattern
+- HSV color wheel
 
-### 05 - Transformations (Coming Soon)
-Rotate, flip, scale, and crop images.
+### 03 - Image Filters
+Applies convolution filters to images.
 
-### 06 - Image Effects (Coming Soon)
-Special effects: negative, posterize, pixelate, vignette.
+```bash
+bin\03_image_filters.exe
+```
+
+**Filters:**
+- Box blur
+- Gaussian blur
+- Sharpen
+- Edge detection (Sobel)
+- Emboss
+
+### 04 - Color Operations
+Adjusts colors and brightness.
+
+```bash
+bin\04_color_operations.exe
+```
+
+**Operations:**
+- Brightness adjustment (+/-)
+- Contrast (high/low)
+- Grayscale conversion
+- Sepia tone
+- Color inversion
+- Binary threshold
+- Gamma correction
+
+### 05 - Transformations
+Geometric image transformations.
+
+```bash
+bin\05_transformations.exe
+```
+
+**Transforms:**
+- Flip horizontal/vertical
+- Rotate 90°, 180°, 270°
+- Scale (50%, 200%)
+- Crop center
+
+### 06 - Image Effects
+Special artistic effects.
+
+```bash
+bin\06_image_effects.exe
+```
+
+**Effects:**
+- Pixelate (mosaic)
+- Posterize (reduced colors)
+- Vignette (dark edges)
+- Mirror effect
+- Oil painting style
+- Solarize
 
 ## Example Image
 

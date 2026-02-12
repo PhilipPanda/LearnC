@@ -39,11 +39,11 @@ cd examples
 | Example | What It Teaches |
 |---------|----------------|
 | 01_bmp_reader | Reading BMP files, parsing headers, pixel data extraction |
-| 02_bmp_writer | Creating BMP files, drawing shapes, gradients |
+| 02_bmp_writer | Creating BMP files, drawing shapes, gradients, color wheels |
 | 03_image_filters | Blur, sharpen, edge detection, emboss with convolution |
-| 04_color_operations | Brightness, contrast, grayscale, sepia tone |
+| 04_color_operations | Brightness, contrast, grayscale, sepia, gamma correction |
 | 05_transformations | Rotate, flip, scale, crop operations |
-| 06_image_effects | Negative, posterize, pixelate, vignette |
+| 06_image_effects | Pixelate, posterize, vignette, oil painting, solarize |
 
 An example BMP image is included in `examples/assets/example-image.bmp` for testing.
 
