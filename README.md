@@ -4,7 +4,7 @@
 
 ---
 
-Learn C by building real programs.
+### Learn C by building real programs.
 
 ---
 
