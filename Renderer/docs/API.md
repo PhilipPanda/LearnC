@@ -119,38 +119,19 @@ void renderer_draw_text(Renderer* rend, const char* text, int x, int y,
 ```
 Draws text at (x, y). Scale 1 is normal, 2 is double size, etc. Basic bitmap font only.
 
-## Drawing - Images
+## Drawing - Textures
 
 ### `image_load_bmp`
 ```c
 Image* image_load_bmp(const char* filename);
 ```
-Loads a BMP file. Returns NULL if it fails. Only supports 24-bit and 32-bit BMPs.
+Loads a BMP file for use as a texture. Returns NULL if it fails. Only supports 24-bit and 32-bit BMPs.
 
 ### `image_free`
 ```c
 void image_free(Image* img);
 ```
-Frees an image loaded with `image_load_bmp`.
-
-### `renderer_draw_image`
-```c
-void renderer_draw_image(Renderer* rend, Image* img, int x, int y);
-```
-Draws an image at (x, y) at its original size.
-
-### `renderer_draw_image_ex`
-```c
-void renderer_draw_image_ex(Renderer* rend, Image* img, int x, int y, 
-                            float scale, uint8_t alpha);
-```
-Draws an image scaled and with alpha transparency. Scale 1.0 is normal, 2.0 is double size. Alpha 0-255.
-
-### `renderer_apply_tint`
-```c
-void renderer_apply_tint(Renderer* rend, Image* img, int x, int y, Color tint);
-```
-Draws an image tinted with a color. Multiplies image RGB by tint RGB.
+Frees a loaded texture.
 
 ## Drawing - 3D
 

@@ -8,7 +8,6 @@ A software renderer written in pure C. No OpenGL, no DirectX - just a framebuffe
 - 2D drawing (lines, circles, rectangles, triangles)
 - 3D math (vectors, matrices, transformations)
 - 3D projection and rendering
-- Image loading (BMP files)
 - Texture mapping
 - Simple text rendering
 
@@ -82,12 +81,11 @@ Each example teaches something specific:
 | Example | What It Teaches |
 |---------|----------------|
 | 01_basic_shapes | Drawing 2D primitives, basic rendering loop |
-| 02_image_rendering | Loading images, alpha blending, transformations |
-| 03_3d_cube | 3D projection, matrices, wireframe rendering |
-| 04_3d_pyramid | Triangle rasterization, depth, basic lighting |
-| 05_particles | Simple physics, managing many objects |
-| 06_textured_cube | Texture mapping, UV coordinates |
-| 07_simple_game | Collision detection, game loop, player input |
+| 02_3d_cube | 3D projection, matrices, wireframe rendering |
+| 03_3d_pyramid | Triangle rasterization, depth, basic lighting |
+| 04_particles | Simple physics, managing many objects |
+| 05_textured_cube | Texture mapping, UV coordinates |
+| 06_simple_game | Collision detection, game loop, player input |
 
 Start with 01, work your way through. Each one builds on previous concepts.
 
