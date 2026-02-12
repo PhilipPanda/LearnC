@@ -6,7 +6,6 @@
   <img src="https://img.shields.io/github/languages/code-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Code Size" />
   <img src="https://img.shields.io/github/repo-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Repo Size" />
   <img src="https://img.shields.io/github/languages/top/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Top Language" />
-  <img src="https://img.shields.io/tokei/lines/github/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Lines of Code" />
 </p>
 
 ---
