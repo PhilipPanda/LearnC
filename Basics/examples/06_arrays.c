@@ -58,6 +58,8 @@ int main(void) {
     printf("*ptr = %d\n", *ptr);      // Same thing
     printf("*(ptr+1) = %d\n", *(ptr+1));  // Second element
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

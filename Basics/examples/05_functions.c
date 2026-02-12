@@ -28,6 +28,8 @@ int main(void) {
     print_separator();
     printf("Done!\n");
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

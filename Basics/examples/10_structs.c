@@ -71,6 +71,8 @@ int main(void) {
     printf("Via pointer: (%.1f, %.1f)\n", ptr->x, ptr->y);
     // ptr->x is shorthand for (*ptr).x
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

@@ -44,6 +44,8 @@ int main(void) {
     printf("x / y = %d\n", x / y);  // Integer division!
     printf("x %% y = %d\n", x % y);  // Remainder (modulo)
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

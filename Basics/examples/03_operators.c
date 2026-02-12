@@ -54,6 +54,8 @@ int main(void) {
     printf("Hot OR cold: %d\n", is_hot || is_cold);        // At least one true?
     printf("NOT cold: %d\n", !is_cold);                    // Flip the value
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

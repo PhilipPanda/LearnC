@@ -2,37 +2,19 @@
 
 Learn C syntax and fundamentals through working examples.
 
-## What's Here
+## What you get
 
-Each example teaches one concept. Read the code, compile it, run it, modify it. That's how you learn.
+- Variables and types
+- Operators and expressions
+- Control flow (if, loops, switch)
+- Functions and scope
+- Pointers and memory addresses
+- Arrays and strings
+- Dynamic memory allocation
+- Structs and custom types
+- File I/O
 
-## Examples
-
-### Getting Started
-- **01_hello_world** - Your first C program
-- **02_variables** - Types, declaration, initialization
-- **03_operators** - Math, comparison, logical operations
-- **04_control_flow** - if/else, loops, switch
-
-### Functions and Scope
-- **05_functions** - Defining and calling functions
-- **06_scope** - Variable scope and lifetime
-- **07_recursion** - Functions calling themselves
-
-### Memory and Pointers
-- **08_pointers** - What pointers are and how to use them
-- **09_arrays** - Fixed-size collections
-- **10_strings** - Character arrays and string functions
-- **11_dynamic_memory** - malloc, free, memory management
-
-### Data Structures
-- **12_structs** - Custom data types
-- **13_typedef** - Type aliases
-- **14_enums** - Named constants
-
-### Files and I/O
-- **15_file_io** - Reading and writing files
-- **16_command_line** - argc/argv, command-line arguments
+Each example is standalone and teaches one concept.
 
 ## Building
 
@@ -50,18 +32,72 @@ gcc 01_hello_world.c -o 01_hello_world
 
 Or build all at once:
 ```bash
+cd examples
 ./build_all.bat    # Windows
 ./build_all.sh     # Linux
 ```
 
+## Using it
+
+Here's a simple example:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    int x = 42;
+    int *ptr = &x;  // Pointer to x
+    
+    printf("x = %d\n", x);
+    printf("Address: %p\n", (void*)&x);
+    printf("Via pointer: %d\n", *ptr);
+    
+    *ptr = 100;  // Modify through pointer
+    printf("x is now: %d\n", x);
+    
+    return 0;
+}
+```
+
+Compile:
+```bash
+gcc program.c -o program
+```
+
 ## Documentation
 
-- **[Syntax Guide](docs/SYNTAX.md)** - C syntax basics
+- **[Syntax Guide](docs/SYNTAX.md)** - C syntax quick reference
 - **[Pointers Explained](docs/POINTERS.md)** - Understanding pointers
 - **[Memory Management](docs/MEMORY.md)** - Stack vs heap, malloc/free
 
-## Learning Path
+## Examples
 
-Go in order. Each example assumes you understood the previous ones.
+Each example teaches something specific:
 
-Don't just read - type the code yourself, change things, break it and fix it. That's how concepts stick.
+| Example | What It Teaches |
+|---------|----------------|
+| 01_hello_world | Basic program structure |
+| 02_variables | Types, declaration, initialization |
+| 03_operators | Arithmetic, comparison, logical operations |
+| 04_control_flow | if/else, loops, switch statements |
+| 05_functions | Function declaration, definition, calling |
+| 06_arrays | Fixed-size collections, indexing |
+| 07_strings | Character arrays, string functions |
+| 08_pointers | Memory addresses, dereferencing |
+| 09_memory | malloc, free, dynamic allocation |
+| 10_structs | Custom data types, nested structs |
+| 11_file_io | Reading and writing files |
+
+Go in order. Each one builds on previous concepts.
+
+## What this teaches
+
+- C syntax and semantics
+- How memory works in C
+- Pointer manipulation
+- Manual memory management
+- Function calling and stack frames
+- Data layout and alignment
+- File operations and I/O
+
+This is foundation knowledge for systems programming, embedded development, and understanding how higher-level languages work under the hood.

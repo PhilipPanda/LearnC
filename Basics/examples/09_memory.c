@@ -83,6 +83,8 @@ int main(void) {
     
     free(message);
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

@@ -60,6 +60,8 @@ int main(void) {
     swap(&a, &b);  // Pass addresses
     printf("After swap: a=%d, b=%d\n", a, b);
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

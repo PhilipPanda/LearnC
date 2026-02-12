@@ -60,6 +60,11 @@ int main(void) {
     scanf("%49s", input);  // Read up to 49 chars (leave room for \0)
     printf("You entered: %s\n", input);
     
+    // Clear input buffer before getchar
+    while (getchar() != '\n');
+    
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

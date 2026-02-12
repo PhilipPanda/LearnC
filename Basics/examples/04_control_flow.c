@@ -93,6 +93,8 @@ int main(void) {
             break;
     }
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 

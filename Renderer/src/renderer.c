@@ -1,13 +1,25 @@
+/*
+ * renderer.c
+ * 
+ * Software renderer implementation for 2D and 3D graphics.
+ * Runs on Windows (GDI32) and Linux (X11).
+ */
+
 #include "renderer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+// Global pointer to active renderer (for window event handling)
 static Renderer* g_renderer = NULL;
 
 #ifdef _WIN32
+// ============================================================================
+// WINDOWS IMPLEMENTATION (using GDI32)
+// ============================================================================
 
+// Windows message handler - processes window events
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
         case WM_CLOSE:
@@ -24,12 +36,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+// Initialize renderer: create window, allocate framebuffer
 bool renderer_init(Renderer* rend, const char* title, int width, int height) {
     g_renderer = rend;
     rend->width = width;
     rend->height = height;
     rend->is_running = true;
 
+    // Register window class
     WNDCLASSEX wc = {0};
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -41,6 +55,7 @@ bool renderer_init(Renderer* rend, const char* title, int width, int height) {
 
     if (!RegisterClassEx(&wc)) return false;
 
+    // Calculate window size to get exact client area
     RECT rect = {0, 0, width, height};
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
@@ -50,15 +65,17 @@ bool renderer_init(Renderer* rend, const char* title, int width, int height) {
 
     if (!rend->hwnd) return false;
 
+    // Create device contexts for double buffering
     rend->hdc = GetDC(rend->hwnd);
     rend->back_buffer_dc = CreateCompatibleDC(rend->hdc);
 
+    // Create DIB section for direct framebuffer access
     BITMAPINFO bmi = {0};
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biWidth = width;
-    bmi.bmiHeader.biHeight = -height;
+    bmi.bmiHeader.biHeight = -height;  // Negative = top-down bitmap
     bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biBitCount = 32;     // 32-bit ARGB
     bmi.bmiHeader.biCompression = BI_RGB;
 
     rend->back_buffer = CreateDIBSection(rend->back_buffer_dc, &bmi, DIB_RGB_COLORS,
@@ -81,10 +98,12 @@ void renderer_cleanup(Renderer* rend) {
     g_renderer = NULL;
 }
 
+// Copy framebuffer to window (present the rendered frame)
 void renderer_present(Renderer* rend) {
     BitBlt(rend->hdc, 0, 0, rend->width, rend->height, rend->back_buffer_dc, 0, 0, SRCCOPY);
 }
 
+// Process window events (close, keyboard, etc.)
 void renderer_handle_events(Renderer* rend) {
     MSG msg;
     while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -93,18 +112,24 @@ void renderer_handle_events(Renderer* rend) {
     }
 }
 
+// Sleep for specified milliseconds (for frame rate control)
 void renderer_sleep(int ms) {
     Sleep(ms);
 }
 
 #else
+// ============================================================================
+// LINUX IMPLEMENTATION (using X11)
+// ============================================================================
 
+// Initialize renderer on Linux
 bool renderer_init(Renderer* rend, const char* title, int width, int height) {
     g_renderer = rend;
     rend->width = width;
     rend->height = height;
     rend->is_running = true;
 
+    // Connect to X server
     rend->display = XOpenDisplay(NULL);
     if (!rend->display) return false;
 
@@ -119,9 +144,11 @@ bool renderer_init(Renderer* rend, const char* title, int width, int height) {
 
     rend->gc = XCreateGC(rend->display, rend->window, 0, NULL);
 
+    // Allocate framebuffer memory
     rend->framebuffer = (uint32_t*)malloc(width * height * sizeof(uint32_t));
     if (!rend->framebuffer) return false;
 
+    // Create XImage pointing to our framebuffer
     Visual* visual = DefaultVisual(rend->display, screen);
     rend->ximage = XCreateImage(rend->display, visual, 24, ZPixmap, 0,
         (char*)rend->framebuffer, width, height, 32, 0);
@@ -131,15 +158,17 @@ bool renderer_init(Renderer* rend, const char* title, int width, int height) {
         return false;
     }
 
+    // Handle window close button properly
     Atom wm_delete = XInternAtom(rend->display, "WM_DELETE_WINDOW", False);
     XSetWMProtocols(rend->display, rend->window, &wm_delete, 1);
 
     return true;
 }
 
+// Clean up Linux resources
 void renderer_cleanup(Renderer* rend) {
     if (rend->ximage) {
-        rend->ximage->data = NULL;
+        rend->ximage->data = NULL;  // Prevent XDestroyImage from freeing our buffer
         XDestroyImage(rend->ximage);
     }
     if (rend->framebuffer) free(rend->framebuffer);
@@ -149,12 +178,14 @@ void renderer_cleanup(Renderer* rend) {
     g_renderer = NULL;
 }
 
+// Copy framebuffer to X11 window
 void renderer_present(Renderer* rend) {
     XPutImage(rend->display, rend->window, rend->gc, rend->ximage, 
         0, 0, 0, 0, rend->width, rend->height);
     XFlush(rend->display);
 }
 
+// Process X11 events
 void renderer_handle_events(Renderer* rend) {
     while (XPending(rend->display)) {
         XEvent event;
@@ -169,28 +200,42 @@ void renderer_handle_events(Renderer* rend) {
     }
 }
 
+// Sleep in microseconds (Linux)
 void renderer_sleep(int ms) {
     usleep(ms * 1000);
 }
 
 #endif
 
+// ============================================================================
+// DRAWING FUNCTIONS (platform-independent)
+// ============================================================================
+
+// Clear entire framebuffer to a solid color
 void renderer_clear(Renderer* rend, Color color) {
+    // Pack color into 32-bit ARGB format
     uint32_t pixel = (color.a << 24) | (color.r << 16) | (color.g << 8) | color.b;
+    
+    // Fill every pixel with this color
     for (int i = 0; i < rend->width * rend->height; i++) {
         rend->framebuffer[i] = pixel;
     }
 }
 
+// Draw a single pixel with alpha blending support
 void renderer_draw_pixel(Renderer* rend, int x, int y, Color color) {
+    // Bounds check - ignore pixels outside screen
     if (x < 0 || x >= rend->width || y < 0 || y >= rend->height) return;
     
+    // Calculate pixel index: row * width + column
     int index = y * rend->width + x;
     uint32_t* pixel = &rend->framebuffer[index];
     
+    // Fast path: fully opaque pixel - just replace
     if (color.a == 255) {
         *pixel = (color.a << 24) | (color.r << 16) | (color.g << 8) | color.b;
     } else {
+        // Alpha blending: mix source and destination colors
         uint8_t dst_r = (*pixel >> 16) & 0xFF;
         uint8_t dst_g = (*pixel >> 8) & 0xFF;
         uint8_t dst_b = *pixel & 0xFF;
@@ -205,16 +250,19 @@ void renderer_draw_pixel(Renderer* rend, int x, int y, Color color) {
 }
 
 void renderer_draw_rect(Renderer* rend, int x, int y, int w, int h, Color color) {
+    // Draw top and bottom edges
     for (int i = 0; i < w; i++) {
         renderer_draw_pixel(rend, x + i, y, color);
         renderer_draw_pixel(rend, x + i, y + h - 1, color);
     }
+    // Draw left and right edges
     for (int i = 0; i < h; i++) {
         renderer_draw_pixel(rend, x, y + i, color);
         renderer_draw_pixel(rend, x + w - 1, y + i, color);
     }
 }
 
+// Draw filled rectangle
 void renderer_draw_filled_rect(Renderer* rend, int x, int y, int w, int h, Color color) {
     for (int j = 0; j < h; j++) {
         for (int i = 0; i < w; i++) {
@@ -223,8 +271,11 @@ void renderer_draw_filled_rect(Renderer* rend, int x, int y, int w, int h, Color
     }
 }
 
+// Draw circle outline using Midpoint Circle Algorithm (Bresenham's)
 void renderer_draw_circle(Renderer* rend, int cx, int cy, int radius, Color color) {
     int x = radius, y = 0, err = 0;
+    
+    // Use 8-way symmetry to draw all octants at once
     while (x >= y) {
         renderer_draw_pixel(rend, cx + x, cy + y, color);
         renderer_draw_pixel(rend, cx + y, cy + x, color);
@@ -234,6 +285,8 @@ void renderer_draw_circle(Renderer* rend, int cx, int cy, int radius, Color colo
         renderer_draw_pixel(rend, cx - y, cy - x, color);
         renderer_draw_pixel(rend, cx + y, cy - x, color);
         renderer_draw_pixel(rend, cx + x, cy - y, color);
+        
+        // Update error term to decide next pixel
         if (err <= 0) {
             y += 1;
             err += 2 * y + 1;
@@ -245,9 +298,12 @@ void renderer_draw_circle(Renderer* rend, int cx, int cy, int radius, Color colo
     }
 }
 
+// Draw filled circle (brute force approach)
 void renderer_draw_filled_circle(Renderer* rend, int cx, int cy, int radius, Color color) {
+    // Check every pixel in the bounding box
     for (int y = -radius; y <= radius; y++) {
         for (int x = -radius; x <= radius; x++) {
+            // Use circle equation: x² + y² <= r²
             if (x * x + y * y <= radius * radius) {
                 renderer_draw_pixel(rend, cx + x, cy + y, color);
             }
@@ -255,16 +311,20 @@ void renderer_draw_filled_circle(Renderer* rend, int cx, int cy, int radius, Col
     }
 }
 
+// Draw line using Bresenham's Line Algorithm
 void renderer_draw_line(Renderer* rend, int x1, int y1, int x2, int y2, Color color) {
+    // Calculate deltas and step directions
     int dx = abs(x2 - x1);
     int dy = abs(y2 - y1);
-    int sx = x1 < x2 ? 1 : -1;
-    int sy = y1 < y2 ? 1 : -1;
-    int err = dx - dy;
+    int sx = x1 < x2 ? 1 : -1;  // Step direction x
+    int sy = y1 < y2 ? 1 : -1;  // Step direction y
+    int err = dx - dy;           // Error accumulator
 
     while (1) {
         renderer_draw_pixel(rend, x1, y1, color);
-        if (x1 == x2 && y1 == y2) break;
+        if (x1 == x2 && y1 == y2) break;  // Reached end point
+        
+        // Decide whether to step horizontally, vertically, or diagonally
         int e2 = 2 * err;
         if (e2 > -dy) {
             err -= dy;
@@ -277,6 +337,11 @@ void renderer_draw_line(Renderer* rend, int x1, int y1, int x2, int y2, Color co
     }
 }
 
+// ============================================================================
+// IMAGE LOADING (BMP format for textures)
+// ============================================================================
+
+// Load BMP image file (24-bit or 32-bit, uncompressed)
 Image* image_load_bmp(const char* filename) {
     FILE* file = fopen(filename, "rb");
     if (!file) {
@@ -284,6 +349,7 @@ Image* image_load_bmp(const char* filename) {
         return NULL;
     }
 
+    // Read BMP header (54 bytes)
     uint8_t header[54];
     if (fread(header, 1, 54, file) != 54) {
         printf("BMP: Invalid header\n");
@@ -291,20 +357,23 @@ Image* image_load_bmp(const char* filename) {
         return NULL;
     }
 
+    // Check magic number "BM"
     if (header[0] != 'B' || header[1] != 'M') {
         printf("BMP: Not a BMP file\n");
         fclose(file);
         return NULL;
     }
 
-    int data_offset = *(int*)&header[10];
-    int width = *(int*)&header[18];
-    int height = *(int*)&header[22];
-    int bits_per_pixel = *(short*)&header[28];
-    int compression = *(int*)&header[30];
+    // Parse header fields
+    int data_offset = *(int*)&header[10];        // Offset to pixel data
+    int width = *(int*)&header[18];               // Image width
+    int height = *(int*)&header[22];              // Image height (negative = top-down)
+    int bits_per_pixel = *(short*)&header[28];   // Bits per pixel
+    int compression = *(int*)&header[30];         // Compression type
 
     printf("BMP: %dx%d, %d-bit, offset=%d\n", width, abs(height), bits_per_pixel, data_offset);
 
+    // Validate format
     if (bits_per_pixel != 24 && bits_per_pixel != 32) {
         printf("BMP: Only 24-bit and 32-bit supported (got %d-bit)\n", bits_per_pixel);
         fclose(file);
@@ -317,16 +386,20 @@ Image* image_load_bmp(const char* filename) {
         return NULL;
     }
 
+    // Allocate image structure and pixel buffer
     Image* img = (Image*)malloc(sizeof(Image));
     img->width = abs(width);
     img->height = abs(height);
     img->pixels = (uint32_t*)malloc(img->width * img->height * sizeof(uint32_t));
 
+    // Seek to pixel data (may not be right after header)
     fseek(file, data_offset, SEEK_SET);
 
+    // BMP rows are padded to 4-byte boundaries
     int row_size = ((bits_per_pixel * img->width + 31) / 32) * 4;
     uint8_t* row = (uint8_t*)malloc(row_size);
 
+    // Read pixel data row by row
     for (int y = 0; y < img->height; y++) {
         if (fread(row, 1, row_size, file) != row_size) {
             printf("BMP: Failed to read row %d\n", y);
@@ -337,15 +410,19 @@ Image* image_load_bmp(const char* filename) {
             return NULL;
         }
         
+        // Convert each pixel to ARGB format
         for (int x = 0; x < img->width; x++) {
+            // BMP stores pixels bottom-to-top by default (height > 0)
             int pixel_index = (height > 0) ? (img->height - 1 - y) * img->width + x : y * img->width + x;
             int byte_index = x * (bits_per_pixel / 8);
             
+            // BMP stores as BGR or BGRA
             uint8_t b = row[byte_index + 0];
             uint8_t g = row[byte_index + 1];
             uint8_t r = row[byte_index + 2];
             uint8_t a = (bits_per_pixel == 32) ? row[byte_index + 3] : 255;
             
+            // Convert to ARGB
             img->pixels[pixel_index] = (a << 24) | (r << 16) | (g << 8) | b;
         }
     }
@@ -356,6 +433,7 @@ Image* image_load_bmp(const char* filename) {
     return img;
 }
 
+// Free image memory
 void image_free(Image* img) {
     if (img) {
         free(img->pixels);
@@ -363,29 +441,36 @@ void image_free(Image* img) {
     }
 }
 
+// Draw image at position (no scaling or blending)
 void renderer_draw_image(Renderer* rend, Image* img, int x, int y) {
     if (!img) return;
+    
+    // Draw each pixel from the image
     for (int j = 0; j < img->height; j++) {
         for (int i = 0; i < img->width; i++) {
             uint32_t pixel = img->pixels[j * img->width + i];
+            // Unpack ARGB components
             Color color = {
-                (pixel >> 16) & 0xFF,
-                (pixel >> 8) & 0xFF,
-                pixel & 0xFF,
-                (pixel >> 24) & 0xFF
+                (pixel >> 16) & 0xFF,  // R
+                (pixel >> 8) & 0xFF,   // G
+                pixel & 0xFF,           // B
+                (pixel >> 24) & 0xFF   // A
             };
             renderer_draw_pixel(rend, x + i, y + j, color);
         }
     }
 }
 
+// Draw image with scaling and alpha override
 void renderer_draw_image_ex(Renderer* rend, Image* img, int x, int y, float scale, uint8_t alpha) {
     if (!img) return;
     int scaled_w = (int)(img->width * scale);
     int scaled_h = (int)(img->height * scale);
     
+    // Simple nearest-neighbor scaling
     for (int j = 0; j < scaled_h; j++) {
         for (int i = 0; i < scaled_w; i++) {
+            // Map scaled coordinates back to source image
             int src_x = (int)(i / scale);
             int src_y = (int)(j / scale);
             if (src_x >= img->width || src_y >= img->height) continue;
@@ -438,23 +523,30 @@ Color color_make(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return c;
 }
 
+// Blend two colors based on source alpha
 Color color_blend(Color src, Color dst) {
     float alpha = src.a / 255.0f;
     Color result = {
         (uint8_t)(src.r * alpha + dst.r * (1 - alpha)),
         (uint8_t)(src.g * alpha + dst.g * (1 - alpha)),
         (uint8_t)(src.b * alpha + dst.b * (1 - alpha)),
-        255
+        255  // Result is fully opaque
     };
     return result;
 }
 
+// ============================================================================
+// TRIANGLE DRAWING
+// ============================================================================
+
+// Draw triangle outline (wireframe)
 void renderer_draw_triangle(Renderer* rend, int x1, int y1, int x2, int y2, int x3, int y3, Color color) {
     renderer_draw_line(rend, x1, y1, x2, y2, color);
     renderer_draw_line(rend, x2, y2, x3, y3, color);
     renderer_draw_line(rend, x3, y3, x1, y1, color);
 }
 
+// Draw filled triangle using barycentric coordinates
 void renderer_draw_filled_triangle(Renderer* rend, int x1, int y1, int x2, int y2, int x3, int y3, Color color) {
     if (y1 > y2) { int tx = x1, ty = y1; x1 = x2; y1 = y2; x2 = tx; y2 = ty; }
     if (y1 > y3) { int tx = x1, ty = y1; x1 = x3; y1 = y3; x3 = tx; y3 = ty; }
@@ -557,58 +649,77 @@ void renderer_draw_textured_triangle(Renderer* rend, int x1, int y1, int x2, int
     }
 }
 
+// ============================================================================
+// 3D MATH - Vectors
+// ============================================================================
+
+// Create 3D vector
 Vec3 vec3_make(float x, float y, float z) {
     Vec3 v = {x, y, z};
     return v;
 }
 
+// Vector addition
 Vec3 vec3_add(Vec3 a, Vec3 b) {
     return vec3_make(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
+// Vector subtraction
 Vec3 vec3_sub(Vec3 a, Vec3 b) {
     return vec3_make(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
+// Scalar multiplication
 Vec3 vec3_mul(Vec3 v, float s) {
     return vec3_make(v.x * s, v.y * s, v.z * s);
 }
 
+// Cross product (returns perpendicular vector)
 Vec3 vec3_cross(Vec3 a, Vec3 b) {
     return vec3_make(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }
 
+// Dot product (measures alignment, 0 = perpendicular, 1 = parallel)
 float vec3_dot(Vec3 a, Vec3 b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+// Normalize to unit length (length = 1)
 Vec3 vec3_normalize(Vec3 v) {
     float len = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
-    if (len == 0) return vec3_make(0, 0, 0);
+    if (len == 0) return vec3_make(0, 0, 0);  // Avoid division by zero
     return vec3_make(v.x / len, v.y / len, v.z / len);
 }
 
+// ============================================================================
+// 3D MATH - Matrices
+// ============================================================================
+
+// Create identity matrix (no transformation)
 Mat4 mat4_identity(void) {
     Mat4 m = {0};
-    m.m[0][0] = m.m[1][1] = m.m[2][2] = m.m[3][3] = 1.0f;
+    m.m[0][0] = m.m[1][1] = m.m[2][2] = m.m[3][3] = 1.0f;  // Diagonal = 1
     return m;
 }
 
+// Create perspective projection matrix (3D to 2D with depth)
 Mat4 mat4_perspective(float fov, float aspect, float near_plane, float far_plane) {
     Mat4 m = {0};
     float tan_half_fov = tanf(fov / 2.0f);
-    m.m[0][0] = 1.0f / (aspect * tan_half_fov);
-    m.m[1][1] = 1.0f / tan_half_fov;
-    m.m[2][2] = -(far_plane + near_plane) / (far_plane - near_plane);
-    m.m[2][3] = -1.0f;
-    m.m[3][2] = -(2.0f * far_plane * near_plane) / (far_plane - near_plane);
+    m.m[0][0] = 1.0f / (aspect * tan_half_fov);  // X scale
+    m.m[1][1] = 1.0f / tan_half_fov;              // Y scale
+    m.m[2][2] = -(far_plane + near_plane) / (far_plane - near_plane);  // Z mapping
+    m.m[2][3] = -1.0f;                             // Perspective divide trigger
+    m.m[3][2] = -(2.0f * far_plane * near_plane) / (far_plane - near_plane);  // Z offset
     return m;
 }
 
+// Create view matrix (camera transformation)
 Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up) {
-    Vec3 f = vec3_normalize(vec3_sub(target, eye));
-    Vec3 s = vec3_normalize(vec3_cross(f, up));
-    Vec3 u = vec3_cross(s, f);
+    // Build camera coordinate system
+    Vec3 f = vec3_normalize(vec3_sub(target, eye));  // Forward vector
+    Vec3 s = vec3_normalize(vec3_cross(f, up));      // Right vector
+    Vec3 u = vec3_cross(s, f);                        // Up vector
     
     Mat4 m = mat4_identity();
     m.m[0][0] = s.x;
@@ -626,14 +737,16 @@ Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up) {
     return m;
 }
 
+// Create translation matrix (move in space)
 Mat4 mat4_translate(float x, float y, float z) {
     Mat4 m = mat4_identity();
-    m.m[3][0] = x;
-    m.m[3][1] = y;
-    m.m[3][2] = z;
+    m.m[3][0] = x;  // Translation in X
+    m.m[3][1] = y;  // Translation in Y
+    m.m[3][2] = z;  // Translation in Z
     return m;
 }
 
+// Rotate around X axis (pitch)
 Mat4 mat4_rotate_x(float angle) {
     Mat4 m = mat4_identity();
     float c = cosf(angle);
@@ -645,6 +758,7 @@ Mat4 mat4_rotate_x(float angle) {
     return m;
 }
 
+// Rotate around Y axis (yaw)
 Mat4 mat4_rotate_y(float angle) {
     Mat4 m = mat4_identity();
     float c = cosf(angle);
@@ -656,6 +770,7 @@ Mat4 mat4_rotate_y(float angle) {
     return m;
 }
 
+// Rotate around Z axis (roll)
 Mat4 mat4_rotate_z(float angle) {
     Mat4 m = mat4_identity();
     float c = cosf(angle);
@@ -667,16 +782,19 @@ Mat4 mat4_rotate_z(float angle) {
     return m;
 }
 
+// Create scale matrix (resize)
 Mat4 mat4_scale(float x, float y, float z) {
     Mat4 m = mat4_identity();
-    m.m[0][0] = x;
-    m.m[1][1] = y;
-    m.m[2][2] = z;
+    m.m[0][0] = x;  // Scale X
+    m.m[1][1] = y;  // Scale Y
+    m.m[2][2] = z;  // Scale Z
     return m;
 }
 
+// Multiply two matrices (combine transformations)
 Mat4 mat4_mul(Mat4 a, Mat4 b) {
     Mat4 result = {0};
+    // Standard matrix multiplication
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 4; k++) {
@@ -687,6 +805,7 @@ Mat4 mat4_mul(Mat4 a, Mat4 b) {
     return result;
 }
 
+// Transform vector by matrix (apply transformation)
 Vec3 mat4_mul_vec3(Mat4 m, Vec3 v, float w) {
     Vec3 result;
     result.x = m.m[0][0] * v.x + m.m[1][0] * v.y + m.m[2][0] * v.z + m.m[3][0] * w;
@@ -715,6 +834,7 @@ void renderer_draw_line_3d(Renderer* rend, Vec3 p1, Vec3 p2, Mat4 transform, Col
     renderer_draw_line(rend, x1, y1, x2, y2, color);
 }
 
+// Draw filled 3D triangle with basic lighting
 void renderer_draw_triangle_3d(Renderer* rend, Vec3 p1, Vec3 p2, Vec3 p3, Mat4 transform, Color color) {
     int x1, y1, x2, y2, x3, y3;
     renderer_project_point(rend, p1, transform, &x1, &y1, NULL);
@@ -723,6 +843,11 @@ void renderer_draw_triangle_3d(Renderer* rend, Vec3 p1, Vec3 p2, Vec3 p3, Mat4 t
     renderer_draw_filled_triangle(rend, x1, y1, x2, y2, x3, y3, color);
 }
 
+// ============================================================================
+// TEXT RENDERING
+// ============================================================================
+
+// Simple 8x8 pixel font bitmap data (ASCII 0-127)
 static const uint8_t font_data[128][8] = {
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, 
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -854,9 +979,13 @@ static const uint8_t font_data[128][8] = {
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 };
 
+// Draw text using bitmap font with scaling support
 void renderer_draw_text(Renderer* rend, const char* text, int x, int y, Color color, int scale) {
     int start_x = x;
+    
+    // Process each character
     for (int i = 0; text[i] != '\0'; i++) {
+        // Handle newlines
         if (text[i] == '\n') {
             y += 8 * scale;
             x = start_x;
@@ -864,11 +993,13 @@ void renderer_draw_text(Renderer* rend, const char* text, int x, int y, Color co
         }
         
         uint8_t ch = (uint8_t)text[i];
-        if (ch >= 128) ch = 0;
+        if (ch >= 128) ch = 0;  // Only ASCII supported
         
+        // Draw character from bitmap font
         for (int row = 0; row < 8; row++) {
             uint8_t byte = font_data[ch][row];
             for (int col = 0; col < 8; col++) {
+                // Check if this pixel is set
                 if (byte & (1 << col)) {
                     for (int sy = 0; sy < scale; sy++) {
                         for (int sx = 0; sx < scale; sx++) {

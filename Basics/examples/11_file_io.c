@@ -72,6 +72,8 @@ int main(void) {
     }
     printf("\n");
     
+    printf("\nPress Enter to exit...");
+    getchar();
     return 0;
 }
 
