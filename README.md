@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="github/images/banner.png" alt="LearnC" width="800"/>
+  <img src="github/images/banner.png" alt="LearnC" width="500"/>
 </p>
 
 ---
 
-Learn C by building real programs.
+### Learn C by building real programs.
 
 ---
 
