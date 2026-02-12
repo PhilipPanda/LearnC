@@ -3,7 +3,6 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F&logo=github" alt="GitHub Stars" />
   <img src="https://img.shields.io/github/languages/code-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Code Size" />
   <img src="https://img.shields.io/github/repo-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Repo Size" />
   <img src="https://img.shields.io/github/languages/top/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Top Language" />
