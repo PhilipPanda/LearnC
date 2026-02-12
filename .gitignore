@@ -1,0 +1,30 @@
+# Build artifacts
+*.o
+*.exe
+*.out
+*.a
+*.so
+*.dll
+bin/
+build/
+
+# IDE
+.vscode/
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Assets/outputs (optional)
+*.ppm
+*.bmp
+assets/*.bmp
+
+# Test files
+test_*
