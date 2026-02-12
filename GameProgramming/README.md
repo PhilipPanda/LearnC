@@ -1,4 +1,4 @@
-# Game Programming in C
+# C Game Programming
 
 Build actual games from scratch using the renderer. Learn game loops, input handling, collision detection, and game state management by making real playable games.
 
