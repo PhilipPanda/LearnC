@@ -67,6 +67,11 @@ Build your own programming language from scratch. Tokenizer, parser, evaluator, 
 
 [→ Go to Scripting Language](ScriptingLanguage/)
 
+### Text Editor
+Build a real working text editor from scratch. Text buffers, cursor movement, keyboard input, file operations. Understand how vim and VSCode work.
+
+[→ Go to Text Editor](TextEditor/)
+
 ---
 
 <p align="center">
