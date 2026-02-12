@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="github/images/banner.png" alt="LearnC" width="500"/>
+  <img src="github/images/banner.png" alt="LearnC banner" width="500"/>
 </p>
 
 ---
@@ -30,6 +30,11 @@ Make actual playable games. Snake, Pong, Breakout using the renderer. Learn game
 
 [→ Go to Game Programming](GameProgramming/)
 
+### Memory Management
+Master manual memory management. Debug leaks, build custom allocators (arena, pool, stack), understand malloc/free internals.
+
+[→ Go to Memory Management](MemoryManagement/)
+
 ### Networking
 Network programming with sockets. TCP/UDP clients and servers, multi-client handling, HTTP basics, file transfer.
 
@@ -39,5 +44,11 @@ Network programming with sockets. TCP/UDP clients and servers, multi-client hand
 Software rendering from scratch - everything runs on CPU, no GPU. 2D graphics, 3D projection, lighting, particles, and a simple game.
 
 [→ Go to Renderer](Renderer/)
+
+---
+
+<p align="center">
+  <img src="github/images/showcase.png" alt="LearnC showcase">
+</p>
 
 
