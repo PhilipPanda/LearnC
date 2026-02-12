@@ -22,6 +22,11 @@ Learn C syntax and fundamentals through working examples. Variables, pointers, f
 
 [→ Go to Basics](Basics/)
 
+### File I/O & Serialization
+Master reading and writing files. Text files, binary files, CSV parsing, JSON handling. Proper error handling and resource management.
+
+[→ Go to File I/O](FileIO/)
+
 ### Algorithms
 Classic algorithms with visual output. Sorting (bubble, merge, quick), searching (binary), recursion, and backtracking. See Big O in action.
 
