@@ -12,12 +12,15 @@
 
 ### Basics
 Learn C syntax and fundamentals through working examples. Variables, pointers, functions, memory - everything you need to write real C code.
+
 [→ Go to Basics](Basics/)
 
 ### Renderer
 Software rendering from scratch - everything runs on CPU, no GPU. 2D graphics, 3D projection, lighting, particles, and a simple game.
+
 [→ Go to Renderer](Renderer/)
 
 ### Networking
 Network programming with sockets. TCP/UDP clients and servers, multi-client handling, HTTP basics, file transfer.
+
 [→ Go to Networking](Networking/)
