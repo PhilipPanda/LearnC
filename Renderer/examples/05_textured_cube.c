@@ -52,14 +52,16 @@ int main(void) {
         renderer_handle_events(&rend);
         float time = (float)(clock() - start) / CLOCKS_PER_SEC;
 
-        renderer_clear(&rend, color_make(20, 25, 35, 255));
+        renderer_clear(&rend, color_make(12, 15, 20, 255));
         
         renderer_draw_text(&rend, texture ? "Textured 3D Cube" : "Colored 3D Cube", 10, 10, color_make(255, 255, 255, 255), 2);
 
+        // Smoother rotation
         Mat4 model = mat4_identity();
-        model = mat4_mul(model, mat4_rotate_x(time * 0.6f));
-        model = mat4_mul(model, mat4_rotate_y(time * 0.8f));
-        model = mat4_mul(model, mat4_translate(0, 0, -4));
+        model = mat4_mul(model, mat4_rotate_y(time * 0.6f));
+        model = mat4_mul(model, mat4_rotate_x(time * 0.4f));
+        model = mat4_mul(model, mat4_scale(1.2f, 1.2f, 1.2f));  // Slightly bigger
+        model = mat4_mul(model, mat4_translate(0, 0, -3.5f));
 
         Mat4 view = mat4_look_at(vec3_make(0, 0, 0), vec3_make(0, 0, -1), vec3_make(0, 1, 0));
         Mat4 proj = mat4_perspective(M_PI / 3.0f, 800.0f / 600.0f, 0.1f, 100.0f);

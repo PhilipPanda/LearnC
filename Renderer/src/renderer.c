@@ -279,47 +279,80 @@ void renderer_draw_line(Renderer* rend, int x1, int y1, int x2, int y2, Color co
 
 Image* image_load_bmp(const char* filename) {
     FILE* file = fopen(filename, "rb");
-    if (!file) return NULL;
+    if (!file) {
+        printf("BMP: Could not open %s\n", filename);
+        return NULL;
+    }
 
     uint8_t header[54];
-    fread(header, 1, 54, file);
-
-    if (header[0] != 'B' || header[1] != 'M') {
+    if (fread(header, 1, 54, file) != 54) {
+        printf("BMP: Invalid header\n");
         fclose(file);
         return NULL;
     }
 
+    if (header[0] != 'B' || header[1] != 'M') {
+        printf("BMP: Not a BMP file\n");
+        fclose(file);
+        return NULL;
+    }
+
+    int data_offset = *(int*)&header[10];
     int width = *(int*)&header[18];
     int height = *(int*)&header[22];
     int bits_per_pixel = *(short*)&header[28];
+    int compression = *(int*)&header[30];
+
+    printf("BMP: %dx%d, %d-bit, offset=%d\n", width, abs(height), bits_per_pixel, data_offset);
 
     if (bits_per_pixel != 24 && bits_per_pixel != 32) {
+        printf("BMP: Only 24-bit and 32-bit supported (got %d-bit)\n", bits_per_pixel);
+        fclose(file);
+        return NULL;
+    }
+
+    if (compression != 0) {
+        printf("BMP: Compressed BMPs not supported\n");
         fclose(file);
         return NULL;
     }
 
     Image* img = (Image*)malloc(sizeof(Image));
-    img->width = width;
+    img->width = abs(width);
     img->height = abs(height);
     img->pixels = (uint32_t*)malloc(img->width * img->height * sizeof(uint32_t));
 
-    int row_size = ((bits_per_pixel * width + 31) / 32) * 4;
+    fseek(file, data_offset, SEEK_SET);
+
+    int row_size = ((bits_per_pixel * img->width + 31) / 32) * 4;
     uint8_t* row = (uint8_t*)malloc(row_size);
 
     for (int y = 0; y < img->height; y++) {
-        fread(row, 1, row_size, file);
+        if (fread(row, 1, row_size, file) != row_size) {
+            printf("BMP: Failed to read row %d\n", y);
+            free(row);
+            free(img->pixels);
+            free(img);
+            fclose(file);
+            return NULL;
+        }
+        
         for (int x = 0; x < img->width; x++) {
             int pixel_index = (height > 0) ? (img->height - 1 - y) * img->width + x : y * img->width + x;
-            uint8_t b = row[x * (bits_per_pixel / 8) + 0];
-            uint8_t g = row[x * (bits_per_pixel / 8) + 1];
-            uint8_t r = row[x * (bits_per_pixel / 8) + 2];
-            uint8_t a = (bits_per_pixel == 32) ? row[x * 4 + 3] : 255;
+            int byte_index = x * (bits_per_pixel / 8);
+            
+            uint8_t b = row[byte_index + 0];
+            uint8_t g = row[byte_index + 1];
+            uint8_t r = row[byte_index + 2];
+            uint8_t a = (bits_per_pixel == 32) ? row[byte_index + 3] : 255;
+            
             img->pixels[pixel_index] = (a << 24) | (r << 16) | (g << 8) | b;
         }
     }
 
     free(row);
     fclose(file);
+    printf("BMP: Successfully loaded %dx%d image\n", img->width, img->height);
     return img;
 }
 

@@ -44,16 +44,16 @@ int main(void) {
         renderer_handle_events(&rend);
         float time = (float)(clock() - start) / CLOCKS_PER_SEC;
 
-        renderer_clear(&rend, color_make(10, 15, 25, 255));
+        renderer_clear(&rend, color_make(8, 10, 15, 255));
         
-        renderer_draw_text(&rend, "3D Pyramid with Basic Lighting", 10, 10, color_make(255, 255, 255, 255), 2);
-        renderer_draw_text(&rend, "Faces facing light are brighter", 10, 30, color_make(200, 200, 200, 255), 1);
+        renderer_draw_text(&rend, "3D Pyramid with Lighting", 10, 10, color_make(255, 255, 255, 255), 2);
+        renderer_draw_text(&rend, "Surfaces facing the light are brighter", 10, 30, color_make(150, 150, 150, 255), 1);
 
-        // Transform matrices - same pattern as the cube example
+        // Slower rotation for better 3D perception
         Mat4 model = mat4_identity();
-        model = mat4_mul(model, mat4_rotate_x(time * 0.5f + 0.3f));
-        model = mat4_mul(model, mat4_rotate_y(time));
-        model = mat4_mul(model, mat4_translate(0, 0, -5));
+        model = mat4_mul(model, mat4_rotate_y(time * 0.7f));
+        model = mat4_mul(model, mat4_rotate_x(sin(time * 0.5f) * 0.4f));
+        model = mat4_mul(model, mat4_translate(0, 0, -3.5f));  // Closer
 
         Mat4 view = mat4_look_at(
             vec3_make(0, 0, 0),
@@ -64,31 +64,38 @@ int main(void) {
         Mat4 proj = mat4_perspective(M_PI / 3.0f, 800.0f / 600.0f, 0.1f, 100.0f);
         Mat4 transform = mat4_mul(proj, mat4_mul(view, model));
 
-        // Draw each triangular face
+        // Light from top-right
+        Vec3 light_dir = vec3_normalize(vec3_make(0.5f, 0.8f, 0.6f));
+
+        // Draw faces back to front for proper visibility
         for (int i = 0; i < 6; i++) {
             Vec3 v1 = pyramid_vertices[pyramid_faces[i][0]];
             Vec3 v2 = pyramid_vertices[pyramid_faces[i][1]];
             Vec3 v3 = pyramid_vertices[pyramid_faces[i][2]];
             
-            // Calculate surface normal (perpendicular to the face)
-            // Cross product of two edges gives a perpendicular vector
+            // Calculate normal in model space
             Vec3 edge1 = vec3_sub(v2, v1);
             Vec3 edge2 = vec3_sub(v3, v1);
-            Vec3 normal = vec3_cross(edge1, edge2);
+            Vec3 normal = vec3_normalize(vec3_cross(edge1, edge2));
             
-            // Simple diffuse lighting - dot product with light direction
-            // Faces pointing toward light are brighter
-            Vec3 light_dir = vec3_make(0, 0, 1);
-            float brightness = vec3_dot(vec3_normalize(normal), light_dir);
-            if (brightness < 0.2f) brightness = 0.2f;  // Minimum ambient light
+            // Lighting calculation
+            float diffuse = vec3_dot(normal, light_dir);
+            if (diffuse < 0.0f) diffuse = 0.0f;
             
-            // Apply lighting to the base color
+            // Ambient + diffuse
+            float brightness = 0.3f + diffuse * 0.7f;
+            
             Color col = face_colors[i];
             col.r = (uint8_t)(col.r * brightness);
             col.g = (uint8_t)(col.g * brightness);
             col.b = (uint8_t)(col.b * brightness);
             
             renderer_draw_triangle_3d(&rend, v1, v2, v3, transform, col);
+            
+            // Draw edges for better depth perception
+            renderer_draw_line_3d(&rend, v1, v2, transform, color_make(20, 20, 20, 255));
+            renderer_draw_line_3d(&rend, v2, v3, transform, color_make(20, 20, 20, 255));
+            renderer_draw_line_3d(&rend, v3, v1, transform, color_make(20, 20, 20, 255));
         }
 
         renderer_present(&rend);

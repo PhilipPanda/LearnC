@@ -38,22 +38,7 @@ Draws rectangles, circles, lines, and triangles. Shows a pulsing circle and rota
 
 **Start here.** If this makes sense, move on. If not, read it until it does.
 
-### 02_image_rendering.c
-
-**What it teaches:** Loading external assets, alpha blending, transformations
-
-Loads a BMP file and displays it in different ways - scaled, faded, tinted. Shows alpha blending by drawing transparent circles over it.
-
-**Key concepts:**
-- `image_load_bmp` / `image_free`
-- Drawing images vs drawing primitives
-- Alpha transparency
-- Image scaling
-- Color tinting
-
-**You need:** A `test.bmp` file in the `assets/` folder (64x64 recommended). Create one with any paint program.
-
-### 03_3d_cube.c
+### 02_3d_cube.c
 
 **What it teaches:** 3D projection, matrices, wireframe rendering
 
@@ -69,7 +54,7 @@ Draws a spinning wireframe cube. This is where 3D starts. You'll see how matrice
 
 **Read this with** [docs/3D_GRAPHICS.md](../docs/3D_GRAPHICS.md) open.
 
-### 04_3d_pyramid.c
+### 03_3d_pyramid.c
 
 **What it teaches:** Solid 3D objects, triangle rasterization, basic lighting
 
@@ -82,7 +67,7 @@ Draws a solid colored pyramid with faces that get brighter/darker based on their
 - Backface culling
 - Simple diffuse lighting
 
-### 05_particles.c
+### 04_particles.c
 
 **What it teaches:** Managing multiple objects, simple physics
 
@@ -95,7 +80,7 @@ Spawns particles that move, fall due to gravity, and fade out. Shows how to hand
 - Lifetime management
 - Alpha fade-out
 
-### 06_textured_cube.c
+### 05_textured_cube.c
 
 **What it teaches:** Texture mapping, UV coordinates
 
@@ -109,7 +94,7 @@ Draws a spinning cube with a texture on each face (or colored faces if no textur
 
 **Optional:** Add a `test.bmp` to `assets/` to see textures. Works without it too.
 
-### 07_simple_game.c
+### 06_simple_game.c
 
 **What it teaches:** Putting it all together in an interactive program
 
