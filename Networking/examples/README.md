@@ -52,6 +52,62 @@ What it teaches:
 
 Accepts clients one at a time. Each client must disconnect before the next can connect.
 
+### 04_chat_server.c
+**Multi-client chat server**
+
+What it teaches:
+- Handling multiple clients simultaneously
+- Using select() to multiplex connections
+- Broadcasting messages to all clients
+- Managing client list
+
+Run this and connect with multiple `02_simple_client` instances. Messages from one appear on all.
+
+### 05_udp_sender.c
+**UDP datagram sender**
+
+What it teaches:
+- Creating UDP sockets (SOCK_DGRAM)
+- Sending datagrams with sendto()
+- Connectionless communication
+- No handshake required
+
+Run `06_udp_receiver` first, then use this to send messages.
+
+### 06_udp_receiver.c
+**UDP datagram receiver**
+
+What it teaches:
+- Receiving UDP datagrams
+- Getting sender information with recvfrom()
+- No accept() needed for UDP
+- Handling connectionless protocol
+
+Run this first, then connect with `05_udp_sender`.
+
+### 07_http_client.c
+**Simple HTTP client**
+
+What it teaches:
+- HTTP protocol basics
+- DNS lookup with gethostbyname()
+- Formatting HTTP requests
+- Parsing responses
+
+Usage: `07_http_client http://example.com`
+
+### 08_file_transfer.c
+**File transfer (server and client)**
+
+What it teaches:
+- Binary file transfer
+- Custom protocol design (length-prefixed)
+- Progress indicators
+- Large data handling
+
+Server mode: `08_file_transfer server`  
+Client mode: `08_file_transfer client 127.0.0.1 file.txt`
+
 ## Testing
 
 **Test server with telnet:**
