@@ -72,6 +72,11 @@ Build a real working text editor from scratch. Text buffers, cursor movement, ke
 
 [→ Go to Text Editor](TextEditor/)
 
+### Audio Processing
+Master digital audio fundamentals. WAV file parsing, audio effects (delay, reverb, distortion), FFT frequency analysis, synthesis, and multi-track mixing - everything you need to build audio software.
+
+[→ Go to Audio Processing](AudioProcessing/)
+
 ---
 
 <p align="center">
