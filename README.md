@@ -77,6 +77,11 @@ Master digital audio fundamentals. WAV file parsing, audio effects (delay, rever
 
 [→ Go to Audio Processing](AudioProcessing/)
 
+### Image Processing
+Learn digital image processing fundamentals. BMP file handling, image filters (blur, sharpen, edge detection), color manipulation, transformations (rotate, scale, crop), and effects - build your own image editor.
+
+[→ Go to Image Processing](ImageProcessing/)
+
 ---
 
 <p align="center">
