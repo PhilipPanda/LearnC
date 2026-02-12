@@ -15,12 +15,19 @@ Learn C syntax and fundamentals through working examples. Variables, pointers, f
 
 [→ Go to Basics](Basics/)
 
-### Renderer
-Software rendering from scratch - everything runs on CPU, no GPU. 2D graphics, 3D projection, lighting, particles, and a simple game.
+### Algorithms
+Classic algorithms with visual output. Sorting (bubble, merge, quick), searching (binary), recursion, and backtracking. See Big O in action.
 
-[→ Go to Renderer](Renderer/)
+[→ Go to Algorithms](Algorithms/)
 
 ### Networking
 Network programming with sockets. TCP/UDP clients and servers, multi-client handling, HTTP basics, file transfer.
 
 [→ Go to Networking](Networking/)
+
+### Renderer
+Software rendering from scratch - everything runs on CPU, no GPU. 2D graphics, 3D projection, lighting, particles, and a simple game.
+
+[→ Go to Renderer](Renderer/)
+
+
