@@ -7,7 +7,6 @@
   <img src="https://img.shields.io/github/languages/code-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Code Size" />
   <img src="https://img.shields.io/github/repo-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Repo Size" />
   <img src="https://img.shields.io/github/languages/top/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Top Language" />
-  <img src="https://img.shields.io/tokei/lines/github/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Lines of Code" />
 </p>
 
 ---
@@ -57,6 +56,11 @@ Network programming with sockets. TCP/UDP clients and servers, multi-client hand
 Software rendering from scratch - everything runs on CPU, no GPU. 2D graphics, 3D projection, lighting, particles, and a simple game.
 
 [→ Go to Renderer](Renderer/)
+
+### Scripting Language
+Build your own programming language from scratch. Tokenizer, parser, evaluator, variables, functions, control flow. See how interpreters work internally.
+
+[→ Go to Scripting Language](ScriptingLanguage/)
 
 ---
 
