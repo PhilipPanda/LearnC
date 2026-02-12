@@ -20,6 +20,11 @@ Classic algorithms with visual output. Sorting (bubble, merge, quick), searching
 
 [→ Go to Algorithms](Algorithms/)
 
+### Data Structures
+Build data structures from scratch. Linked lists, stacks, queues, trees, hash tables, graphs, heaps. See how they actually work internally.
+
+[→ Go to Data Structures](DataStructures/)
+
 ### Networking
 Network programming with sockets. TCP/UDP clients and servers, multi-client handling, HTTP basics, file transfer.
 
