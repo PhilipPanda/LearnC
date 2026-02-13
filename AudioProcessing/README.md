@@ -1,4 +1,4 @@
-# Audio Processing in C
+# Audio Processing
 
 Learn audio processing fundamentals in C. WAV file handling, audio effects, frequency analysis, synthesis, and mixing - everything you need to work with digital audio.
 

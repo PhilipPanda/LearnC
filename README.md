@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/github/stars/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F&logo=github" alt="GitHub Stars" />
   <img src="https://img.shields.io/github/languages/code-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Code Size" />
   <img src="https://img.shields.io/github/repo-size/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Repo Size" />
   <img src="https://img.shields.io/github/languages/top/PhilipPanda/LearnC?style=for-the-badge&color=0A1F44&labelColor=2F2F2F" alt="Top Language" />
@@ -80,6 +81,11 @@ Master digital audio fundamentals. WAV file parsing, audio effects (delay, rever
 Learn digital image processing fundamentals. BMP file handling, image filters (blur, sharpen, edge detection), color manipulation, transformations (rotate, scale, crop), and effects - build your own image editor.
 
 [→ Go to Image Processing](ImageProcessing/)
+
+### Cryptography
+Learn cryptography fundamentals in C. Hash functions (MD5, SHA-256), symmetric encryption (AES, XOR), asymmetric encryption (RSA), password hashing, digital signatures, and secure coding - understand security at a low level.
+
+[→ Go to Cryptography](Cryptography/)
 
 ---
 

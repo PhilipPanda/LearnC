@@ -1,4 +1,4 @@
-# Image Processing in C
+# Image Processing
 
 Learn digital image processing fundamentals in C. BMP file handling, image filters, color manipulation, transformations, and effects - everything you need to build image processing software.
 
