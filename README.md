@@ -87,6 +87,11 @@ Learn cryptography fundamentals in C. Hash functions (MD5, SHA-256), symmetric e
 
 [→ Go to Cryptography](Cryptography/)
 
+### Compression
+Learn data compression algorithms in C. Run-Length Encoding, Huffman coding, LZ77 sliding window - understand how ZIP, gzip, and PNG compression work by building them from scratch.
+
+[→ Go to Compression](Compression/)
+
 ---
 
 <p align="center">
